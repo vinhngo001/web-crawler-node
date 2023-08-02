@@ -1,0 +1,12 @@
+# Tasks
+- What is crawler?
+- Demo crawler
+- Initial setup
+- Fetching html
+- Searching for elements
+- Crawling the links
+- Ignore seen links
+- Stay on the same page
+- const {host, protocol} = url urlParser.parse(url);
+- Handle absolute vs relative links
+- Downloading images

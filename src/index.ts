@@ -23,5 +23,13 @@ const crawl = async ({ url, ignore }) => {
 
     const { host, protocol } = urlParser.parse(url);
     const response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const links = $("a").map((i, link)=> link.attribs.href).get();
 
+    const imageUrls = $("img").map((i, link) => link.attribs.src).get();
+
+    imageUrls.forEach((imageUrl)=>{
+
+    })
 }

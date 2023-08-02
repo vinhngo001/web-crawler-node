@@ -25,11 +25,29 @@ const crawl = async ({ url, ignore }) => {
     const response = await fetch(url);
     const html = await response.text();
     const $ = cheerio.load(html);
-    const links = $("a").map((i, link)=> link.attribs.href).get();
+    const links = $("a").map((i, link) => link.attribs.href).get();
 
     const imageUrls = $("img").map((i, link) => link.attribs.src).get();
 
-    imageUrls.forEach((imageUrl)=>{
+    imageUrls.forEach((imageUrl) => {
+        fetch(getUrl(imageUrl, host, protocol)).then((response) => {
+            const fileName = path.basename(imageUrl);
+            const dest = fs.createWriteStream(`image/${fileName}`);
+            response.body.pipe(dest);
+        });
+    });
 
-    })
+    links
+        .filter(link => link.includes(host) && !link.includes(ignore))
+        .forEach(link => {
+            crawl({
+                url: getUrl(link, host, protocol),
+                ignore
+            });
+        });
 }
+
+crawl({
+    url: "http://stevescooking.blogspot.com/",
+    ignore: "/search",
+})

@@ -18,7 +18,7 @@ const getUrl = (link: any, host: any, protocol: any) => {
 
 const crawl = async ({ url, ignore }) => {
     if (seenUrls[url]) return;
-    console.log("crawling...", url, "...");
+    console.log("crawling...", url);
     seenUrls[url] = true;
 
     const { host, protocol } = urlParser.parse(url);
@@ -30,16 +30,20 @@ const crawl = async ({ url, ignore }) => {
     const imageUrls = $("img").map((i, link) => link.attribs.src).get();
 
     imageUrls.forEach((imageUrl) => {
-        fetch(getUrl(imageUrl, host, protocol)).then((response) => {
-            const fileName = path.basename(imageUrl);
-            const dest = fs.createWriteStream(`image/${fileName}`);
-            response.body.pipe(dest);
-        });
+        fetch(getUrl(imageUrl, host, protocol))
+            .then((response: any) => {
+                const fileName = path.basename(imageUrl);
+                if (fileName !== "*") {
+                    // console.log({ fileName });
+                    const dest = fs.createWriteStream(`images/${fileName}`);
+                    response.body.pipe(dest);
+                }
+            });
     });
 
     links
-        .filter(link => link.includes(host) && !link.includes(ignore))
-        .forEach(link => {
+        .filter((link) => link.includes(host) && !link.includes(ignore))
+        .forEach((link) => {
             crawl({
                 url: getUrl(link, host, protocol),
                 ignore
